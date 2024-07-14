@@ -10,7 +10,8 @@ const client = new S3Client({
   },
 });
 
-export async function updloadFile(file) {
+export async function uploadFile(file) {
+  console.log("FILEPATH", file.tempFilePath);
   const stream = fs.createReadStream(file.tempFilePath);
   const uploadParams = {
     Bucket: AWS_BUCKET_NAME,
