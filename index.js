@@ -1,5 +1,7 @@
 import express from "express";
 import fileUpload from "express-fileupload";
+import "./config.js";
+import { updloadFile } from "./s3.js";
 const app = express();
 
 app.use(
@@ -13,7 +15,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/files", (req, res) => {
-  console.log(req.files);
+  updloadFile(req.files.file);
   res.json("subiendo archivo");
 });
 
