@@ -1,7 +1,7 @@
 import express from "express";
 import fileUpload from "express-fileupload";
 import "./config.js";
-import { getFiles, uploadFile, getFile } from "./s3.js";
+import { getFiles, uploadFile, getFile, downloadFile } from "./s3.js";
 const app = express();
 
 app.use(
@@ -20,6 +20,12 @@ app.get("/file/:fileName", async (req, res) => {
   const file = await getFile(fileName);
   if (!file) return res.json({ error: "No such file" });
   res.json(file.$metadata);
+});
+app.get("/download/:fileName", async (req, res) => {
+  const { fileName } = req.params;
+  const file = await downloadFile(fileName);
+  console.log("Download file ");
+  res.send("file downloaded");
 });
 
 app.post("/files", async (req, res) => {

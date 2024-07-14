@@ -22,8 +22,6 @@ export async function uploadFile(file) {
   try {
     const command = new PutObjectCommand(uploadParams);
     return await client.send(command);
-
-    console.log("File uploaded successfully:", result);
   } catch (error) {
     console.error("Error uploading file:", error);
   }
@@ -49,6 +47,23 @@ export async function getFile(fileName) {
     }
 
     return await client.send(command);
+  } catch (error) {
+    console.error("Error getting file:", error);
+  }
+}
+export async function downloadFile(fileName) {
+  try {
+    const command = new GetObjectCommand({
+      Bucket: AWS_BUCKET_NAME,
+      Key: fileName,
+    });
+
+    if (!command) {
+      return "No such file";
+    }
+
+    const result = await client.send(command);
+    result.Body.pipe(fs.createWriteStream(`./downloads/${fileName}`));
   } catch (error) {
     console.error("Error getting file:", error);
   }
