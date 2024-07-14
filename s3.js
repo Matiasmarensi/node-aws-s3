@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, ListObjectsCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { AWS_BUCKET_NAME, AWS_REGION_NAME, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY } from "./config.js";
 import fs from "fs";
 
@@ -36,4 +36,20 @@ export async function getFiles() {
 
   const result = await client.send(command);
   return result;
+}
+
+export async function getFile(fileName) {
+  try {
+    const command = new GetObjectCommand({
+      Bucket: AWS_BUCKET_NAME,
+      Key: fileName,
+    });
+    if (!command) {
+      return "No such file";
+    }
+
+    return await client.send(command);
+  } catch (error) {
+    console.error("Error getting file:", error);
+  }
 }
