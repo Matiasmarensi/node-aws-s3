@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
 import { AWS_BUCKET_NAME, AWS_REGION_NAME, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY } from "./config.js";
 import fs from "fs";
 
@@ -21,10 +21,19 @@ export async function uploadFile(file) {
 
   try {
     const command = new PutObjectCommand(uploadParams);
-    const result = await client.send(command);
+    return await client.send(command);
 
     console.log("File uploaded successfully:", result);
   } catch (error) {
     console.error("Error uploading file:", error);
   }
+}
+
+export async function getFiles() {
+  const command = new ListObjectsCommand({
+    Bucket: AWS_BUCKET_NAME,
+  });
+
+  const result = await client.send(command);
+  return result;
 }

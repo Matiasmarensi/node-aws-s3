@@ -1,7 +1,7 @@
 import express from "express";
 import fileUpload from "express-fileupload";
 import "./config.js";
-import { uploadFile } from "./s3.js";
+import { getFiles, uploadFile } from "./s3.js";
 const app = express();
 
 app.use(
@@ -10,8 +10,10 @@ app.use(
     tempFileDir: "./tmp/",
   })
 );
-app.get("/", (req, res) => {
-  res.json("probando s3");
+app.get("/", async (req, res) => {
+  const files = await getFiles();
+
+  res.json(files.Contents);
 });
 
 app.post("/files", async (req, res) => {
