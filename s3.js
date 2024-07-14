@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand, ListObjectsCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { AWS_BUCKET_NAME, AWS_REGION_NAME, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY } from "./config.js";
 import fs from "fs";
-
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const client = new S3Client({
   region: AWS_REGION_NAME,
   credentials: {
@@ -47,6 +47,22 @@ export async function getFile(fileName) {
     }
 
     return await client.send(command);
+  } catch (error) {
+    console.error("Error getting file:", error);
+  }
+}
+
+export async function getFileUrl(fileName) {
+  try {
+    const command = new GetObjectCommand({
+      Bucket: AWS_BUCKET_NAME,
+      Key: fileName,
+    });
+    if (!command) {
+      return "No such file";
+    }
+
+    return await getSignedUrl(client, command, { expiresIn: 3600 });
   } catch (error) {
     console.error("Error getting file:", error);
   }
